@@ -1,74 +1,112 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { FontAwesome,FontAwesome5, Ionicons } from '@expo/vector-icons';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+export default function IQTesterScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView className="flex-1 bg-gray-900 pt-16">
+      <StatusBar style="light" />
+
+      <View className='flex flex-row justify-between items-center p-4'>
+        <Image resizeMode='contain' className='h-16 w-20 ' source={{uri:"https://i0.wp.com/thebest-iqtest.com/wp-content/uploads/2021/02/IQ-Test-2.png?fit=200%2C129&ssl=1"}} />
+        <TouchableOpacity className='h-12 rounded-full justify-center items-center w-12 bg-gray-700'>
+          <Ionicons name='close' color={'#fff'} size={23} />
+        </TouchableOpacity>
+      </View>
+
+      <View className='bg-gray-800 flex-1 p-4 rounded-t-3xl mt-3'>
+        <Text className="text-white text-center text-4xl font-bold mt-4">
+          Think You’re a True Genius?
+        </Text>
+        <Text className="text-gray-400 text-center mt-2 text-lg px-6">
+          It’s time to put your brilliance to the test!
+          This is your chance to prove yourself.
+          Test Your IQ for <Text className="text-blue-400">Free.</Text>
+        </Text>
+
+        <View className="flex-row justify-center mt-4 space-x-4">
+          <View className="bg-gray-800 mr-2 px-4 border border-gray-600 py-3 rounded-full">
+            <Text className="text-gray-300">Duration- 15:00 Mins</Text>
+          </View>
+          <View className="bg-gray-800 px-4 border border-gray-600 py-3 rounded-full">
+            <Text className="text-gray-300">20 Questions</Text>
+          </View>
+        </View>
+
+        <ScrollView className="mt-6 space-y-4">
+          {/* Paet1 */}
+          <View className="relative overflow-visible pt-5">
+            <View className="bg-gray-700 p-4 flex-1 rounded-xl overflow-visible mx-2">
+              <View>
+                <View className="bg-green-500 w-[120px] px-2 py-2 rounded-full flex-row items-center justify-center space-x-1">
+                  <FontAwesome5 color="#fff" name="share-alt-square" />
+                  <Text className="text-white ml-1 text-sm">Math Solution</Text>
+                </View>
+                <Text className="text-white mt-4">If 4x + 2 = 14, what is x?</Text>
+                <View className="absolute right-5 top-2">
+                  <View className="bg-gray-600 w-[90px] px-2 py-2 rounded-full"></View>
+                  <View className="bg-gray-600 w-[70px] px-2 py-1 mt-[2px] rounded-full"></View>
+                </View>
+              </View>
+              <View className="absolute left-[160px] -top-3 z-50 overflow-visible">
+                <View className="bg-gray-50 w-10 h-10 rounded-full justify-center items-center">
+                  <Text className="text-2xl font-bold">1</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Part2 */}
+          <View className="relative overflow-visible pt-5">
+            <View className="bg-gray-700 p-4 flex-1 rounded-xl overflow-visible mr-5">
+              <View>
+                <View className="bg-blue-500 w-[140px] px-2 py-2 rounded-full flex-row items-center justify-center space-x-1">
+                  <FontAwesome5 color="#fff" name="share-alt-square" />
+                  <Text className="text-white ml-1 text-sm">Spatial Reasoning</Text>
+                </View>
+                <Text className="text-white mt-4">If 4x + 2 = 14, what is x?</Text>
+                <View className="absolute right-5 top-2">
+                  <View className="bg-gray-600 w-[90px] px-2 py-2 rounded-full"></View>
+                  <View className="bg-gray-600 w-[70px] px-2 py-1 mt-[2px] rounded-full"></View>
+                </View>
+              </View>
+              <View className="absolute -right-[18px] -top-3 z-50 overflow-visible">
+                <View className="bg-gray-50 w-10 h-10 rounded-full justify-center items-center">
+                  <Text className="text-2xl font-bold">2</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Part 3 */}
+          <View className="relative overflow-visible pt-5">
+            <View className="bg-gray-700 p-4 flex-1 rounded-xl overflow-visible ml-5">
+              <View>
+                <View className="bg-red-500 w-[150px] px-2 py-2 rounded-full flex-row items-center justify-center">
+                  <FontAwesome5 color="#fff" name="share-alt-square" />
+                  <Text className="text-white ml-1 text-sm">Symbol Substitution</Text>
+                </View>
+                <Text className="text-white mt-4">If Δ + 5 = 10, then Δ = ?</Text>
+                <View className="absolute right-5 top-2">
+                  <View className="bg-gray-600 w-[90px] px-2 py-2 rounded-full"></View>
+                  <View className="bg-gray-600 w-[70px] px-2 py-1 mt-[2px] rounded-full"></View>
+                </View>
+              </View>
+              <View className="absolute -left-[18px] -top-3 z-50 overflow-visible">
+                <View className="bg-gray-50 w-10 h-10 rounded-full justify-center items-center">
+                  <Text className="text-2xl font-bold">3</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+
+         
+        </ScrollView>
+      </View>
+      <TouchableOpacity className="bg-yellow-500 py-4 rounded-full mt-6">
+        <Text className="text-black text-center font-bold text-lg">Start Testing</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
