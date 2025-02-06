@@ -12,7 +12,7 @@ const options = [
 ];
 
 export default function QuizScreen() {
-  const [progress, setprogress] = useState(40);
+  const [progressbar, setprogressbar] = useState(40);
   const [selectedoption, setselectedoption] = useState('');
   const [showsheet, setshowsheet] = useState(false);
   return (<>
@@ -23,7 +23,7 @@ export default function QuizScreen() {
         </TouchableOpacity>
         <Text className="text-white text-sm">1/20</Text>
         <View className='h-3 bg-gray-500 rounded-full w-[250px]'>
-          <View className={` bg-pink-500 h-full rounded-full`} style={{width:progress}}></View>
+          <View className={` bg-pink-500 h-full rounded-full`} style={{width:progressbar}}></View>
         </View>
         <TouchableOpacity className='h-10 rounded-full justify-center items-center w-10 bg-gray-700'>
           <Ionicons name='close' color={'#fff'} size={23} />
@@ -64,7 +64,7 @@ export default function QuizScreen() {
           )}
         />
       </View>
-      <TouchableOpacity onPress={()=>selectedoption===''?null:setshowsheet(true)} className={` ${selectedoption===''?"bg-gray-700 opacity-50":'bg-yellow-500'} py-3 rounded-xl mt-6 `}>
+      <TouchableOpacity onPress={()=>selectedoption===''?null:setshowsheet(true)} className={` ${selectedoption===''?"bg-gray-700 mb-3 opacity-50":'bg-yellow-500'} py-3 rounded-xl mt-6 `}>
         <Text className="text-gray-100 text-center font-bold text-lg">Continue</Text>
       </TouchableOpacity>
     </View>
@@ -77,7 +77,7 @@ export default function QuizScreen() {
             <Text className='text-center text-sm text-gray-400 '>Quam, voluptates. Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, atque.</Text>
 
             <TextInput className='bg-[#373737] rounded p-4 py-4 my-5' placeholder='Enter your email to get result' placeholderTextColor={'#a3a3a3'} />
-            <TouchableOpacity className={` bg-yellow-500 py-3 rounded-full `}>
+            <TouchableOpacity className={` bg-yellow-500 py-3 rounded-full mb-3`}>
               <Text className="text-gray-900 text-center font-bold text-lg">Continue</Text>
             </TouchableOpacity>
           </View>

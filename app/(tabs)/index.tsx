@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome,FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function IQTesterScreen() {
   return (
@@ -104,7 +105,7 @@ export default function IQTesterScreen() {
          
         </ScrollView>
       </View>
-      <TouchableOpacity className="bg-yellow-500 py-4 rounded-full mt-6">
+      <TouchableOpacity onPress={()=>router.push("/explore")} className="bg-yellow-500 py-4 mb-3 rounded-full mt-6">
         <Text className="text-black text-center font-bold text-lg">Start Testing</Text>
       </TouchableOpacity>
     </SafeAreaView>
