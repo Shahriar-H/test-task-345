@@ -2,20 +2,21 @@ import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'r
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome,FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import {mainbgColor} from "../constants/Colors"
 
-export default function IQTesterScreen() {
+export default function Home() {
   return (
-    <SafeAreaView className="flex-1 bg-gray-900 pt-16">
+    <SafeAreaView className="flex-1 pt-16" style={{backgroundColor:mainbgColor}}>
       <StatusBar style="light" />
 
       <View className='flex flex-row justify-between items-center p-4'>
-        <Image resizeMode='contain' className='h-16 w-20 ' source={{uri:"https://i0.wp.com/thebest-iqtest.com/wp-content/uploads/2021/02/IQ-Test-2.png?fit=200%2C129&ssl=1"}} />
-        <TouchableOpacity className='h-12 rounded-full justify-center items-center w-12 bg-gray-700'>
-          <Ionicons name='close' color={'#fff'} size={23} />
+        <Image resizeMode='contain' className='h-20 w-40 ' source={require("../assets/images/splashlogo1.png")} />
+        <TouchableOpacity className='h-12 rounded-full justify-center items-center w-12 bg-[#3c4249]'>
+          <Ionicons name='close' color={'#d6d6d6'} size={23} />
         </TouchableOpacity>
       </View>
 
-      <View className='bg-gray-800 flex-1 p-4 rounded-t-3xl mt-3'>
+      <View className='bg-[#25292E] flex-1 p-4 rounded-t-3xl mt-3'>
         <Text className="text-white text-center text-4xl font-bold mt-4">
           Think You’re a True Genius?
         </Text>
@@ -37,7 +38,7 @@ export default function IQTesterScreen() {
         <ScrollView className="mt-6 space-y-4">
           {/* Paet1 */}
           <View className="relative overflow-visible pt-5">
-            <View className="bg-gray-700 p-4 flex-1 rounded-xl overflow-visible mx-2">
+            <View className="bg-[#3c4249] p-4 flex-1 rounded-xl overflow-visible mx-2">
               <View>
                 <View className="bg-green-500 w-[120px] px-2 py-2 rounded-full flex-row items-center justify-center space-x-1">
                   <FontAwesome5 color="#fff" name="share-alt-square" />
@@ -59,7 +60,7 @@ export default function IQTesterScreen() {
 
           {/* Part2 */}
           <View className="relative overflow-visible pt-5">
-            <View className="bg-gray-700 p-4 flex-1 rounded-xl overflow-visible mr-5">
+            <View className="bg-[#3c4249] p-4 flex-1 rounded-xl overflow-visible mr-5">
               <View>
                 <View className="bg-blue-500 w-[140px] px-2 py-2 rounded-full flex-row items-center justify-center space-x-1">
                   <FontAwesome5 color="#fff" name="share-alt-square" />
@@ -81,7 +82,7 @@ export default function IQTesterScreen() {
 
           {/* Part 3 */}
           <View className="relative overflow-visible pt-5">
-            <View className="bg-gray-700 p-4 flex-1 rounded-xl overflow-visible ml-5">
+            <View className="bg-[#3c4249] p-4 flex-1 rounded-xl overflow-visible ml-5">
               <View>
                 <View className="bg-red-500 w-[150px] px-2 py-2 rounded-full flex-row items-center justify-center">
                   <FontAwesome5 color="#fff" name="share-alt-square" />
@@ -104,10 +105,11 @@ export default function IQTesterScreen() {
 
          
         </ScrollView>
+        <TouchableOpacity onPress={()=>router.push("/questions")} className="bg-yellow-500 py-4 mb-1 rounded-full">
+          <Text className="text-black text-center font-bold text-lg">Start Testing</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={()=>router.push("/explore")} className="bg-yellow-500 py-4 mb-3 rounded-full mt-6">
-        <Text className="text-black text-center font-bold text-lg">Start Testing</Text>
-      </TouchableOpacity>
+      
     </SafeAreaView>
   );
 }

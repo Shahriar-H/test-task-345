@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-test-app",
-    "slug": "my-test-app",
+    "name": "IQ Test",
+    "slug": "iq-test-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -28,10 +28,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splashlogo1.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#000"
         }
       ]
     ],

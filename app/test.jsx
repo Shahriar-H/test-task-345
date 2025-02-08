@@ -25,7 +25,7 @@ export default function QuizScreen() {
         <View className='h-3 bg-gray-500 rounded-full w-[250px]'>
           <View className={` bg-pink-500 h-full rounded-full`} style={{width:progressbar}}></View>
         </View>
-        <TouchableOpacity className='h-10 rounded-full justify-center items-center w-10 bg-gray-700'>
+        <TouchableOpacity className='h-12 rounded-full justify-center items-center w-12 bg-gray-700 pl-[1px]'>
           <Ionicons name='close' color={'#fff'} size={23} />
         </TouchableOpacity>
       </View>
@@ -64,7 +64,7 @@ export default function QuizScreen() {
           )}
         />
       </View>
-      <TouchableOpacity onPress={()=>selectedoption===''?null:setshowsheet(true)} className={` ${selectedoption===''?"bg-gray-700 mb-3 opacity-50":'bg-yellow-500'} py-3 rounded-xl mt-6 `}>
+      <TouchableOpacity onPress={()=>setshowsheet(true)} className={` ${selectedoption===''?"bg-gray-700 mb-3 opacity-50":'bg-yellow-500'} py-3 rounded-xl mt-6 `}>
         <Text className="text-gray-100 text-center font-bold text-lg">Continue</Text>
       </TouchableOpacity>
     </View>
