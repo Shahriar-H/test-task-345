@@ -43,8 +43,14 @@ export default function RootLayout() {
           headerShown:false
         }} />
         <Stack.Screen name="scores" options={{
-          headerShown:false
-        }} />
+         headerShown:false
+        }} /> 
+        <Stack.Screen name="cardpayment" options={{
+         headerShown:false
+        }} /> 
+
+
+
         {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
         <Stack.Screen name="+not-found" options={{
           headerShown:false
