@@ -26,7 +26,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.shahriarh.mytestapp"/>
-        <data android:scheme="exp+my-test-app"/>
+        <data android:scheme="exp+iq-test-app"/>
       </intent-filter>
     </activity>
   </application>

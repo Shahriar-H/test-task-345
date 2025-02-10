@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.shahriarh.mytestapp"
@@ -43,7 +43,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "9964c2d1-be23-4eb2-a472-fcaaadde3b0c"
+        "projectId": "a5c11469-2b80-4ee7-a0f0-c8120d1dc431"
       }
     }
   }

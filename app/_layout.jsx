@@ -48,6 +48,9 @@ export default function RootLayout() {
         <Stack.Screen name="cardpayment" options={{
          headerShown:false
         }} /> 
+        <Stack.Screen name="result" options={{
+         headerShown:false
+        }} /> 
 
 
 

@@ -97,7 +97,7 @@ export default function Cardpayment() {
         
 
 
-            <TouchableOpacity onPress={()=>setisShowingTelegramBlanace(true)} className={` bg-yellow-500 py-3 rounded-full mb-3 mt-8`}>
+            <TouchableOpacity onPress={()=>router.dismissTo('/result')} className={` bg-yellow-500 py-3 rounded-full mb-3 mt-8`}>
               <Text className="text-gray-900 text-center font-bold text-lg">See Result</Text>
             </TouchableOpacity>
           </Animatable.View>}

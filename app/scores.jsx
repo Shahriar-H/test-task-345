@@ -17,6 +17,7 @@ export default function QuizScreen() {
   const [selectcountry, setselectcountry] = useState({name:'United States', dial_code:"+1",code:"US"});
   const [requestforTelegramCode, setrequestforTelegramCode] = useState(false);
   const [showDropdown, setshowDropdown] = useState(false);
+  const [ispaymentsuccess, setispaymentsuccess] = useState(false);
 
   const fetchJsonCountryinfo = async ()=>{
     const response = await fetch("https://gist.githubusercontent.com/anubhavshrimal/75f6183458db8c453306f93521e93d37/raw/f77e7598a8503f1f70528ae1cbf9f66755698a16/CountryCodes.json")
@@ -264,8 +265,47 @@ export default function QuizScreen() {
             </View>
 
 
-            <TouchableOpacity onPress={()=>setrequestforTelegramCode(true)} className={` bg-yellow-500 py-3 rounded-full mb-3 mt-[150px]`}>
-              <Text className="text-gray-900 text-center font-bold text-lg">Continue</Text>
+            <TouchableOpacity onPress={()=>{setisShowingTelegramBlanace(false);setispaymentsuccess(true);setisTelegramconnected(false)}} className={` bg-yellow-500 py-3 rounded-full mb-3 mt-[150px]`}>
+              <Text className="text-gray-900 text-center font-bold text-lg">Confirm and Pay now</Text>
+            </TouchableOpacity>
+          </Animatable.View>}
+
+
+          {/* I payment success show */}
+          {ispaymentsuccess&&<Animatable.View duration={200} animation="fadeInUpBig" className='bg-[#1c1c1c] rounded-t-3xl p-4 w-full absolute bottom-0 py-7'>
+
+            <View className="justify-center items-center mb-10">
+              <Image resizeMode='contain' source={require("../assets/images/success.png")} />
+            </View>
+
+
+            <Text className='text-center text-3xl text-gray-50 font-bold '>Payment Successful!</Text>
+            <Text className='text-center px-12 text-sm text-gray-400 '>Your payment was processed successfully. A receipt has been sent to your email.</Text>
+
+        
+
+
+            <TouchableOpacity onPress={()=>router.dismissTo('/result')} className={` bg-yellow-500 py-3 rounded-full mb-3 mt-8`}>
+              <Text className="text-gray-900 text-center font-bold text-lg">See Result</Text>
+            </TouchableOpacity>
+          </Animatable.View>}
+
+          {/* Show if payment failed */}
+          {false&&<Animatable.View duration={200} animation="fadeInUpBig" className='bg-[#1c1c1c] rounded-t-3xl p-4 w-full absolute bottom-0 py-7'>
+
+            <View className="justify-center items-center mb-10">
+              <Image resizeMode='contain' source={require("../assets/images/declined.png")} />
+            </View>
+
+
+            <Text className='text-center text-3xl text-gray-50 font-bold '>Payment Declined</Text>
+            <Text className='text-center px-12 text-sm text-gray-400 '>Your bank declined this payment due to insufficient funds. Want to try with another card?</Text>
+
+        
+
+
+            <TouchableOpacity onPress={()=>setisShowingTelegramBlanace(true)} className={` bg-yellow-500 py-3 rounded-full mb-3 mt-8`}>
+              <Text className="text-gray-900 text-center font-bold text-lg">See Result</Text>
             </TouchableOpacity>
           </Animatable.View>}
     </View>}
