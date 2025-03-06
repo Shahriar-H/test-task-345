@@ -1,69 +1,71 @@
 import { View, Text, TouchableOpacity, FlatList, TextInput } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 import { mainbgColor } from '@/constants/Colors';
 import { router } from 'expo-router';
+import { useQuery } from '@apollo/client';
+import { GET_ALL_QUIZZES } from '@/queries/queries';
 
 // Define 5 sample questions with correct answers
-const questions = [
-  {
-    id: 1,
-    question: 'Which item does not belong in this list?',
-    options: [
-      { id: 'A', label: 'Apple' },
-      { id: 'B', label: 'Mango' },
-      { id: 'C', label: 'Pear' },
-      { id: 'D', label: 'Watermelon' },
-    ],
-    correctAnswer: 'Pear',
-  },
-  {
-    id: 2,
-    question: 'What is the capital of France?',
-    options: [
-      { id: 'A', label: 'Berlin' },
-      { id: 'B', label: 'Madrid' },
-      { id: 'C', label: 'Paris' },
-      { id: 'D', label: 'Rome' },
-    ],
-    correctAnswer: 'Paris',
-  },
-  {
-    id: 3,
-    question: 'Which gas do plants absorb from the atmosphere?',
-    options: [
-      { id: 'A', label: 'Oxygen' },
-      { id: 'B', label: 'Nitrogen' },
-      { id: 'C', label: 'Carbon Dioxide' },
-      { id: 'D', label: 'Hydrogen' },
-    ],
-    correctAnswer: 'Carbon Dioxide',
-  },
-  {
-    id: 4,
-    question: 'What is 5 + 3?',
-    options: [
-      { id: 'A', label: '6' },
-      { id: 'B', label: '8' },
-      { id: 'C', label: '10' },
-      { id: 'D', label: '12' },
-    ],
-    correctAnswer: '8',
-  },
-  {
-    id: 5,
-    question: 'Which planet is known as the Red Planet?',
-    options: [
-      { id: 'A', label: 'Earth' },
-      { id: 'B', label: 'Venus' },
-      { id: 'C', label: 'Mars' },
-      { id: 'D', label: 'Jupiter' },
-    ],
-    correctAnswer: 'Mars',
-  },
-];
+// const questions = [
+//   {
+//     id: 1,
+//     question: 'Which item does not belong in this list?',
+//     options: [
+//       { id: 'A', label: 'Apple' },
+//       { id: 'B', label: 'Mango' },
+//       { id: 'C', label: 'Pear' },
+//       { id: 'D', label: 'Watermelon' },
+//     ],
+//     correctAnswer: 'Pear',
+//   },
+//   {
+//     id: 2,
+//     question: 'What is the capital of France?',
+//     options: [
+//       { id: 'A', label: 'Berlin' },
+//       { id: 'B', label: 'Madrid' },
+//       { id: 'C', label: 'Paris' },
+//       { id: 'D', label: 'Rome' },
+//     ],
+//     correctAnswer: 'Paris',
+//   },
+//   {
+//     id: 3,
+//     question: 'Which gas do plants absorb from the atmosphere?',
+//     options: [
+//       { id: 'A', label: 'Oxygen' },
+//       { id: 'B', label: 'Nitrogen' },
+//       { id: 'C', label: 'Carbon Dioxide' },
+//       { id: 'D', label: 'Hydrogen' },
+//     ],
+//     correctAnswer: 'Carbon Dioxide',
+//   },
+//   {
+//     id: 4,
+//     question: 'What is 5 + 3?',
+//     options: [
+//       { id: 'A', label: '6' },
+//       { id: 'B', label: '8' },
+//       { id: 'C', label: '10' },
+//       { id: 'D', label: '12' },
+//     ],
+//     correctAnswer: '8',
+//   },
+//   {
+//     id: 5,
+//     question: 'Which planet is known as the Red Planet?',
+//     options: [
+//       { id: 'A', label: 'Earth' },
+//       { id: 'B', label: 'Venus' },
+//       { id: 'C', label: 'Mars' },
+//       { id: 'D', label: 'Jupiter' },
+//     ],
+//     correctAnswer: 'Mars',
+//   },
+// ];
 
 export default function QuizScreen() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -72,6 +74,19 @@ export default function QuizScreen() {
   const [wrongCount, setWrongCount] = useState(0);
   const [progress, setProgress] = useState(0);
   const [showsheet, setshowsheet] = useState(false);
+  const [questions, setquestions] = useState([]);
+  const alphabets = ['A', 'B', 'C', 'D'];
+  const [timeUp, settimeUp] = useState(false);
+  const [timerunning, settimerunning] = useState(0);
+
+  const quizzes = useQuery(GET_ALL_QUIZZES);
+  useEffect(() => {
+    if(quizzes?.data?.Quizs){
+      setquestions(quizzes?.data?.Quizs);
+    }
+    console.log(quizzes?.data,1);
+    // setquestions(quizzes?.data?.Quizs);
+  }, [quizzes?.data?.Quizs]);
 
   const handleNext = () => {
     const currentQuestion = questions[currentQuestionIndex];
@@ -82,14 +97,36 @@ export default function QuizScreen() {
       setWrongCount(wrongCount + 1);
     }
 
-    if (currentQuestionIndex < questions.length - 1) {
+    if (timerunning<121 && currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption('');
       setProgress((currentQuestionIndex + 1) / questions.length);
     }else{
+      setProgress((currentQuestionIndex + 1) / questions.length);
       setshowsheet(true)
     }
   };
+
+  useEffect(() => {
+    if (timerunning >= 120) {
+      settimeUp(true);
+      return; // ✅ Prevents starting a new interval if already at 120
+    }
+
+    const timeInterval = setInterval(() => {
+      settimerunning((prev) => prev + 1);
+    }, 50);
+
+    return () => clearInterval(timeInterval); // ✅ Proper cleanup on unmount
+  }, [timerunning]); // ✅ Depend on timeRunning
+
+  
+
+  if(questions[0]===undefined){
+    return <Text className='text-white text-center mt-20'>Loading...</Text>
+  }
+
+  
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -99,7 +136,7 @@ export default function QuizScreen() {
         <TouchableOpacity className='h-10 rounded-full justify-center items-center w-10 bg-pink-500'>
           <Ionicons name='footsteps-sharp' color={'#fff'} size={23} />
         </TouchableOpacity>
-        <Text className="text-white text-sm">{currentQuestionIndex + 1}/{questions.length}</Text>
+        <Text className="text-white text-sm">{currentQuestionIndex + 1}/{questions?.length}</Text>
         <View className='h-3 bg-gray-500 rounded-full w-[250px]'>
           <View
             className="bg-pink-500 h-full rounded-full"
@@ -112,7 +149,7 @@ export default function QuizScreen() {
       </View>
      
       <View className='flex flex-row'>
-        <Text className="text-white text-sm">Correct: {correctCount}</Text>
+        <Text className="text-white text-sm">Correct: {correctCount} {Math.round((timerunning/120)*100)}</Text>
         <Text className="text-white text-sm">Wrong: {wrongCount}</Text>
       </View>
 
@@ -121,43 +158,44 @@ export default function QuizScreen() {
           <View className="flex items-center -mt-7 bg-[#262A2F] rounded-full w-[50px]">
             <Progress.Circle borderColor={'#262A2F'} unfilledColor={'#262A2F'} color={'#00ce41'} formatText={()=><View className=" bg-gray-800 rounded-full justify-center items-center">
               <Ionicons name="timer" size={28} color="white" />
-            </View>} showsText={true} progress={progress} size={50} indeterminate={false} />
+            </View>} showsText={true} progress={(Math.round((timerunning/120)*100)/100)} size={50} indeterminate={false} />
             
           </View>
         </View>
+        {timerunning>=120&&<Text className='text-center text-red-600 text-xl font-bold'>Time Up!</Text>}
         <Text className="text-white text-3xl text-center mt-6 font-semibold">
-          {currentQuestion.question}
+          {currentQuestion?.question}
         </Text>
 
         <FlatList
-          data={currentQuestion.options}
-          keyExtractor={(item) => item.id}
+          data={currentQuestion?.options}
+          keyExtractor={(item) => item}
           className="mt-6"
-          renderItem={({ item }) => (
+          renderItem={({ item,index }) => (
             <TouchableOpacity
-              onPress={() => setSelectedOption(item.label)}
+              onPress={() => !(timerunning>=120)&&setSelectedOption(item)}
               className={`flex-row border ${
-                selectedOption === item.label ? 'border-pink-300' : 'border-gray-700'
+                selectedOption === item ? 'border-pink-300' : 'border-gray-700'
               } items-center justify-between px-4 py-3 bg-gray-90[#101214] rounded-xl mb-3`}
             >
               <View className="flex-row items-center">
                 <View className="w-8 h-8 bg-pink-500 rounded-full justify-center items-center">
-                  <Text className="text-white font-bold">{item.id}</Text>
+                  <Text className="text-white font-bold">{alphabets[index]}</Text>
                 </View>
-                <Text className="text-white ml-4 text-lg">{item.label}</Text>
+                <Text className="text-white ml-4 text-lg">{item}</Text>
               </View>
               <View
                 className={`w-6 h-6 border-[3px] ${
-                  selectedOption === item.label ? 'border-yellow-300' : 'border-gray-700'
+                  selectedOption === item ? 'border-yellow-300' : 'border-gray-700'
                 } rounded-full justify-center items-center`}
               >
-                {selectedOption === item.label && <View className="bg-yellow-400 h-2 rounded-full w-2"></View>}
+                {selectedOption === item && <View className="bg-yellow-400 h-2 rounded-full w-2"></View>}
               </View>
             </TouchableOpacity>
           )}
         />
 
-      <TouchableOpacity
+      {!(timerunning>=120)&&<TouchableOpacity
         onPress={handleNext}
         disabled={selectedOption === ''}
         className={` ${
@@ -167,7 +205,16 @@ export default function QuizScreen() {
         <Text className="text-gray-900 text-center font-bold text-lg">
           {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity>}
+      {timerunning>=120&&<TouchableOpacity
+        onPress={()=>setshowsheet(true)}
+        disabled={selectedOption === ''}
+        className={` bg-yellow-500 py-4 rounded-full mb-5`}
+      >
+        <Text className="text-gray-900 text-center font-bold text-lg">
+          {'Finish' }
+        </Text>
+      </TouchableOpacity>}
       
       </View>
 

@@ -6,6 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import "../global.css";
+import { ApolloProvider } from '@apollo/client';
+import { client } from '@/queries/apolloClient';
 
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -30,6 +32,7 @@ export default function RootLayout() {
   }
 
   return (
+    <ApolloProvider client={client}>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" 
@@ -62,5 +65,6 @@ export default function RootLayout() {
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
+    </ApolloProvider>
   );
 }

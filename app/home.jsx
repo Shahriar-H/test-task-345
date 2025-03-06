@@ -3,8 +3,13 @@ import { StatusBar } from 'expo-status-bar';
 import { FontAwesome,FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import {mainbgColor} from "../constants/Colors"
+import { useQuery } from '@apollo/client';
+import { GET_ALL_QUIZZES } from '../queries/queries';
+import { useEffect } from 'react';
 
 export default function Home() {
+  
+  
   return (
     <SafeAreaView className="flex-1 pt-16" style={{backgroundColor:mainbgColor}}>
       <StatusBar style="light" />
