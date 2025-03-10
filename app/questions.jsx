@@ -7,6 +7,8 @@ import { mainbgColor } from '@/constants/Colors';
 import { router } from 'expo-router';
 import { useQuery } from '@apollo/client';
 import { GET_ALL_QUIZZES } from '@/queries/queries';
+import { useDispatch, useSelector } from 'react-redux';
+import { incrementScore, otherdata } from '@/redux/quizSlice';
 
 // Define 5 sample questions with correct answers
 // const questions = [
@@ -78,23 +80,30 @@ export default function QuizScreen() {
   const alphabets = ['A', 'B', 'C', 'D'];
   const [timeUp, settimeUp] = useState(false);
   const [timerunning, settimerunning] = useState(0);
+  const {score} = useSelector((state)=>state.quiz)
+  const dispatch = useDispatch();
 
   const quizzes = useQuery(GET_ALL_QUIZZES);
   useEffect(() => {
-    if(quizzes?.data?.Quizs){
-      setquestions(quizzes?.data?.Quizs);
+    if(quizzes?.data?.findAllQuestions){
+      setquestions(quizzes?.data?.findAllQuestions);
     }
-    console.log(quizzes?.data,1);
+    console.log(quizzes?.data?.findAllQuestions,1);
     // setquestions(quizzes?.data?.Quizs);
-  }, [quizzes?.data?.Quizs]);
+  }, [quizzes?.data?.findAllQuestions]);
 
   const handleNext = () => {
     const currentQuestion = questions[currentQuestionIndex];
+    dispatch(otherdata({totalQuestion:questions.length,answered:currentQuestionIndex+1}));
 
-    if (selectedOption === currentQuestion.correctAnswer) {
+    console.log(selectedOption,currentQuestion.correctAnswer,selectedOption.trim()===currentQuestion.correctAnswer.trim(),1===1);
+    
+    if (selectedOption.trim() === currentQuestion.correctAnswer.trim()) {
       setCorrectCount(correctCount + 1);
+      dispatch(incrementScore({correct:correctCount+1,wrong:wrongCount}))
     } else {
       setWrongCount(wrongCount + 1);
+      dispatch(incrementScore({correct:correctCount,wrong:wrongCount+1}))
     }
 
     if (timerunning<121 && currentQuestionIndex < questions.length - 1) {
@@ -103,6 +112,7 @@ export default function QuizScreen() {
       setProgress((currentQuestionIndex + 1) / questions.length);
     }else{
       setProgress((currentQuestionIndex + 1) / questions.length);
+      
       setshowsheet(true)
     }
   };
@@ -112,17 +122,20 @@ export default function QuizScreen() {
       settimeUp(true);
       return; // ✅ Prevents starting a new interval if already at 120
     }
-
-    const timeInterval = setInterval(() => {
-      settimerunning((prev) => prev + 1);
-    }, 50);
+    let timeInterval;
+    if(questions[0]){
+      timeInterval = setInterval(() => {
+        settimerunning((prev) => prev + 1);
+      }, 50);
+    }
+    
 
     return () => clearInterval(timeInterval); // ✅ Proper cleanup on unmount
-  }, [timerunning]); // ✅ Depend on timeRunning
+  }, [timerunning,questions[0]]); // ✅ Depend on timeRunning
 
   
 
-  if(questions[0]===undefined){
+  if(!questions[0]){
     return <Text className='text-white text-center mt-20'>Loading...</Text>
   }
 
@@ -156,19 +169,19 @@ export default function QuizScreen() {
       <View className="bg-[#262A2F] flex-1 px-4 rounded-t-3xl mt-7">
         <View className='flex justify-center items-center'>
           <View className="flex items-center -mt-7 bg-[#262A2F] rounded-full w-[50px]">
-            <Progress.Circle borderColor={'#262A2F'} unfilledColor={'#262A2F'} color={'#00ce41'} formatText={()=><View className=" bg-gray-800 rounded-full justify-center items-center">
+            <Progress.Circle borderColor={'#262A2F'} unfilledColor={'#262A2F'} color={'#00ce41'} formatText={()=><View className=" bg-gray-800 rounded-full p-1 justify-center items-center">
               <Ionicons name="timer" size={28} color="white" />
             </View>} showsText={true} progress={(Math.round((timerunning/120)*100)/100)} size={50} indeterminate={false} />
             
           </View>
         </View>
         {timerunning>=120&&<Text className='text-center text-red-600 text-xl font-bold'>Time Up!</Text>}
-        <Text className="text-white text-3xl text-center mt-6 font-semibold">
-          {currentQuestion?.question}
+        <Text className="text-white text-2xl text-center mt-6 font-semibold">
+          {currentQuestion?.questionText}
         </Text>
 
         <FlatList
-          data={currentQuestion?.options}
+          data={currentQuestion?.answers}
           keyExtractor={(item) => item}
           className="mt-6"
           renderItem={({ item,index }) => (
@@ -208,7 +221,6 @@ export default function QuizScreen() {
       </TouchableOpacity>}
       {timerunning>=120&&<TouchableOpacity
         onPress={()=>setshowsheet(true)}
-        disabled={selectedOption === ''}
         className={` bg-yellow-500 py-4 rounded-full mb-5`}
       >
         <Text className="text-gray-900 text-center font-bold text-lg">
@@ -229,7 +241,7 @@ export default function QuizScreen() {
             <Text className='text-center text-3xl text-gray-50 font-bold '>Email Address</Text>
             <Text className='text-center text-sm text-gray-400 '>Quam, voluptates. Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, atque.</Text>
 
-            <TextInput className='bg-[#373737] rounded-xl p-4 py-4 my-5' placeholder='Enter your email to get result' placeholderTextColor={'#a3a3a3'} />
+            <TextInput className='bg-[#373737] text-white rounded-xl p-4 py-4 my-5' placeholder='Enter your email to get result' placeholderTextColor={'#a3a3a3'} />
             <TouchableOpacity onPress={()=>router.push("/scores")} className={` bg-yellow-500 py-3 rounded-full mb-3`}>
               <Text className="text-gray-900 text-center font-bold text-lg">Continue</Text>
             </TouchableOpacity>

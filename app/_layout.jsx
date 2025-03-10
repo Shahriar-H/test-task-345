@@ -8,9 +8,11 @@ import 'react-native-reanimated';
 import "../global.css";
 import { ApolloProvider } from '@apollo/client';
 import { client } from '@/queries/apolloClient';
+import {store} from "../redux/store"
 
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Provider } from 'react-redux';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,7 +34,8 @@ export default function RootLayout() {
   }
 
   return (
-    <ApolloProvider client={client}>
+    <Provider store={store}>
+    <ApolloProvider client={client} >
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" 
@@ -66,5 +69,6 @@ export default function RootLayout() {
       <StatusBar style="auto" />
     </ThemeProvider>
     </ApolloProvider>
+    </Provider>
   );
 }

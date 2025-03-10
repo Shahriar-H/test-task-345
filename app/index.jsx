@@ -1,9 +1,11 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome,FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
+
 export default function Index() {
+
   return (
     <SafeAreaView className="flex-1 bg-[#1a1e22] pt-16 px-4">
       <StatusBar style="light" />
@@ -19,9 +21,8 @@ export default function Index() {
           <Image resizeMode='contain' source={require("../assets/images/social.png")}/>
         </View>
       </View>
-     
 
-      
+
       <TouchableOpacity onPress={()=>router.push("/home")} className="bg-yellow-500 py-4 mb-5 rounded-full">
         <Text className="text-black text-center font-bold text-lg">Start Testing</Text>
       </TouchableOpacity>
