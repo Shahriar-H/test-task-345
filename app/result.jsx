@@ -5,12 +5,14 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import { mainbgColor } from '@/constants/Colors';
 import { router } from 'expo-router';
+import { useSelector } from 'react-redux';
 
 
 
 export default function ResultScreen() {
   const [selectedOption, setSelectedOption] = useState('');
   const [showsheet, setshowsheet] = useState(false);
+  const { score, other } = useSelector((state) => state.quiz);
 
   const shareLink = async () => {
     try {
@@ -62,7 +64,7 @@ export default function ResultScreen() {
           <View className="flex relative h-[280px] mt-7 justify-center  items-center rounded-full ">
             
             <Image className="absolute" source={require("../assets/images/scoresbg.png")}  />
-            <Text className="text-5xl font-bold">96</Text>
+            <Text className="text-5xl font-bold">{score?.correct}</Text>
             <Text className="text-green-500">Excellent</Text>
            
             
@@ -83,7 +85,7 @@ export default function ResultScreen() {
               <Text className="text-gray-500 text-xs">Your answers are matched with our answers</Text>
             </View>
           </View>
-          <Text className="text-gray-400">17/21</Text>
+          <Text className="text-gray-400">{score?.correct}/{score?.totalQuestion}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={()=>setSelectedOption('card')} className="flex mt-2 flex-row justify-between items-center bg-[#33383d] p-3 rounded-xl border border-gray-700">
@@ -96,7 +98,7 @@ export default function ResultScreen() {
               <Text className="text-gray-500 text-xs">Your answers are not matched with our answers</Text>
             </View>
           </View>
-          <Text className="text-gray-400">4/21</Text>
+          <Text className="text-gray-400">{score?.wrong}/{score?.totalQuestion}</Text>
         </TouchableOpacity>
 
         

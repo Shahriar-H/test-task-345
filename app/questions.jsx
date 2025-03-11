@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, ToastAndroid } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
@@ -69,6 +69,13 @@ import { incrementScore, otherdata } from '@/redux/quizSlice';
 //   },
 // ];
 
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 export default function QuizScreen() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState('');
@@ -80,7 +87,8 @@ export default function QuizScreen() {
   const alphabets = ['A', 'B', 'C', 'D'];
   const [timeUp, settimeUp] = useState(false);
   const [timerunning, settimerunning] = useState(0);
-  const {score} = useSelector((state)=>state.quiz)
+  const {score,other} = useSelector((state)=>state.quiz)
+  const [email, setemail] = useState(null);
   const dispatch = useDispatch();
 
   const quizzes = useQuery(GET_ALL_QUIZZES);
@@ -112,7 +120,7 @@ export default function QuizScreen() {
       setProgress((currentQuestionIndex + 1) / questions.length);
     }else{
       setProgress((currentQuestionIndex + 1) / questions.length);
-      
+      dispatch(otherdata({totalQuestion:questions.length,answered:correctCount+wrongCount}));
       setshowsheet(true)
     }
   };
@@ -138,6 +146,20 @@ export default function QuizScreen() {
   if(!questions[0]){
     return <Text className='text-white text-center mt-20'>Loading...</Text>
   }
+
+  const handlOpenSeet = () => {
+    setshowsheet(true);
+  };
+
+  const handleEmil = () => {
+    if(!validateEmail(email)){
+      ToastAndroid.show("Invalid Email", ToastAndroid.SHORT);
+      return 0;
+    }
+    dispatch(otherdata({...other, email:email}))
+    setshowsheet(false);
+    router.push("/scores");
+  };
 
   
 
@@ -220,7 +242,7 @@ export default function QuizScreen() {
         </Text>
       </TouchableOpacity>}
       {timerunning>=120&&<TouchableOpacity
-        onPress={()=>setshowsheet(true)}
+        onPress={handlOpenSeet}
         className={` bg-yellow-500 py-4 rounded-full mb-5`}
       >
         <Text className="text-gray-900 text-center font-bold text-lg">
@@ -241,10 +263,15 @@ export default function QuizScreen() {
             <Text className='text-center text-3xl text-gray-50 font-bold '>Email Address</Text>
             <Text className='text-center text-sm text-gray-400 '>Quam, voluptates. Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, atque.</Text>
 
-            <TextInput className='bg-[#373737] text-white rounded-xl p-4 py-4 my-5' placeholder='Enter your email to get result' placeholderTextColor={'#a3a3a3'} />
-            <TouchableOpacity onPress={()=>router.push("/scores")} className={` bg-yellow-500 py-3 rounded-full mb-3`}>
+            <TextInput onChangeText={setemail} className='bg-[#373737] text-white rounded-xl p-4 py-4 my-5' placeholder='Enter your email to get result' placeholderTextColor={'#a3a3a3'} />
+
+            {email&&<TouchableOpacity onPress={handleEmil} className={` bg-yellow-500 py-3 rounded-full mb-3`}>
               <Text className="text-gray-900 text-center font-bold text-lg">Continue</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
+
+            {!email&&<TouchableOpacity className={` bg-[#3B4046] py-3 rounded-full mb-3`}>
+              <Text className="text-gray-900 text-center font-bold text-lg">Continue</Text>
+            </TouchableOpacity>}
           </View>
     </View>}
     </>

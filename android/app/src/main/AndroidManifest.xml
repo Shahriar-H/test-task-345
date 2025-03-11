@@ -27,6 +27,7 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.shahriarh.mytestapp"/>
         <data android:scheme="exp+iq-test-app"/>
+        <data android:scheme="iqtest"/>
       </intent-filter>
     </activity>
   </application>
