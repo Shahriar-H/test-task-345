@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <SafeAreaView className="flex-1 pt-16" style={{backgroundColor:mainbgColor}}>
       <StatusBar style="light" />
-
+      {/* Main Part 1 */}
       <View className='flex flex-row justify-between items-center p-4'>
         <Image resizeMode='contain' className='h-20 w-40 ' source={require("../assets/images/splashlogo1.png")} />
         <TouchableOpacity className='h-12 rounded-full justify-center items-center w-12 bg-[#3c4249]'>
@@ -39,7 +39,7 @@ export default function Home() {
             <Text className="text-gray-300">20 Questions</Text>
           </View>
         </View>
-
+        {/* Main Part 2 */}
         <ScrollView className="mt-6 space-y-4">
           {/* Paet1 */}
           <View className="relative overflow-visible pt-5">

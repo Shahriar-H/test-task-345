@@ -6,6 +6,7 @@ import React from 'react';
 import { mainbgColor } from '@/constants/Colors';
 import { router } from 'expo-router';
 import { useSelector } from 'react-redux';
+import { emailtem, toasts } from '../assets/lib';
 
 
 
@@ -13,6 +14,7 @@ export default function ResultScreen() {
   const [selectedOption, setSelectedOption] = useState('');
   const [showsheet, setshowsheet] = useState(false);
   const { score, other } = useSelector((state) => state.quiz);
+  const [isloading, setisloading] = useState(false);
 
   const shareLink = async () => {
     try {
@@ -33,6 +35,34 @@ export default function ResultScreen() {
       console.error('Error sharing:', error);
     }
   };
+
+   const SendEmail = async ()=>{
+      const emailtemplate = emailtem(`${score?.correct}/${score?.totalQuestion}`)
+      setisloading(true)
+      const respose = await fetch(API_URL+"/sendMail",{
+        method:'POST',
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          "subject": "IQTest Result",
+          "message": emailtemplate,
+          "email": other?.email
+        })
+      })
+  
+      const result = await respose.json()
+      if(result?.success){
+        dispatch(otherdata({...other,emailsend:'success'}))
+        toasts(result?.message)
+      }
+      console.log(result)
+      setisloading(false)
+    }
+
+    useEffect(() => {
+      SendEmail()
+    }, []);
   
   
   
@@ -105,11 +135,11 @@ export default function ResultScreen() {
 
       <TouchableOpacity
         onPress={handleNext}
-        
+        disabled={isloading}
         className={` bg-yellow-500 py-4 rounded-full my-5 mt-28`}
       >
         <Text className="text-gray-900 text-center font-bold text-lg">
-          {'Done'}
+          {isloading?"Loading...":'Done'}
         </Text>
       </TouchableOpacity>
       

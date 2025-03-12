@@ -545,10 +545,10 @@ export default function QuizScreen() {
                     <View className="ml-2">
                       <Text className="text-white font-bold text-3xl">
                         <FontAwesome name="star" color={"#ffde05"} size={29} />{" "}
-                        3,454
+                        {Math.round(9.99/0.013)}
                       </Text>
                       <Text className="text-gray-500 text-xs">
-                        Available Balance $29.76
+                        Required Star Balance
                       </Text>
                     </View>
                   </View>
@@ -563,7 +563,7 @@ export default function QuizScreen() {
                   <View className="ml-2 pt-4 border-t border-gray-800">
                     <Text className="text-white font-bold text-xl">$9.99</Text>
                     <Text className="text-gray-500 text-xs">
-                      One-time charge
+                      Equivalent USD (One-time charge)
                     </Text>
                   </View>
                 </View>
