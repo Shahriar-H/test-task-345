@@ -57,6 +57,12 @@ export default function RootLayout() {
         <Stack.Screen name="result" options={{
          headerShown:false
         }} /> 
+        <Stack.Screen name="payment-success" options={{
+         headerShown:false
+        }} /> 
+        <Stack.Screen name="payment-failed" options={{
+         headerShown:false
+        }} /> 
 
 
 
