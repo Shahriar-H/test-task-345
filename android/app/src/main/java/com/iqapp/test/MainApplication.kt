@@ -1,4 +1,4 @@
-package com.shahriarh.mytestapp
+package com.iqapp.test
 
 import android.app.Application
 import android.content.res.Configuration

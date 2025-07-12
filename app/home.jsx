@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome,FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -9,14 +9,32 @@ import { useEffect } from 'react';
 
 export default function Home() {
   
+    const StartQuiz = () => {
+      
+    Alert.alert(
+      "Are you sure you want to start?",
+      "Quiz time will start instantly after you click on start.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Start",
+          onPress: () => router.push("/questions"),
+        },
+      ]
+    )
+    
+  }
   
   return (
-    <SafeAreaView className="flex-1 pt-16" style={{backgroundColor:mainbgColor}}>
+    <SafeAreaView className="flex-1 pt-16 w-full lg:w-1/2 m-auto" style={{backgroundColor:mainbgColor}}>
       <StatusBar style="light" />
       {/* Main Part 1 */}
       <View className='flex flex-row justify-between items-center p-4'>
         <Image resizeMode='contain' className='h-20 w-40 ' source={require("../assets/images/splashlogo1.png")} />
-        <TouchableOpacity className='h-12 rounded-full justify-center items-center w-12 bg-[#3c4249]'>
+        <TouchableOpacity onPress={()=>router.push("/")} className='h-12 rounded-full justify-center items-center w-12 bg-[#3c4249]'>
           <Ionicons name='close' color={'#d6d6d6'} size={23} />
         </TouchableOpacity>
       </View>
@@ -110,7 +128,7 @@ export default function Home() {
 
          
         </ScrollView>
-        <TouchableOpacity onPress={()=>router.push("/questions")} className="bg-yellow-500 py-4 mb-1 rounded-full">
+        <TouchableOpacity onPress={StartQuiz} className="bg-yellow-500 py-4 mb-1 rounded-full">
           <Text className="text-black text-center font-bold text-lg">Start Testing</Text>
         </TouchableOpacity>
       </View>

@@ -17,7 +17,7 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.shahriarh.mytestapp"
+      "package": "com.iqapp.test"
     },
     "web": {
       "bundler": "metro",

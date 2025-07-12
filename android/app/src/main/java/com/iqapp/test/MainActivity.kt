@@ -1,4 +1,4 @@
-package com.shahriarh.mytestapp
+package com.iqapp.test
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

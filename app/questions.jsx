@@ -1,14 +1,22 @@
-import { View, Text, TouchableOpacity, FlatList, TextInput, ToastAndroid } from 'react-native';
-import * as Progress from 'react-native-progress';
-import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import React from 'react';
-import { mainbgColor } from '@/constants/Colors';
-import { router } from 'expo-router';
-import { useQuery } from '@apollo/client';
-import { GET_ALL_QUIZZES } from '@/queries/queries';
-import { useDispatch, useSelector } from 'react-redux';
-import { incrementScore, otherdata } from '@/redux/quizSlice';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+  ToastAndroid,
+  Alert,
+} from "react-native";
+import * as Progress from "react-native-progress";
+import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import React from "react";
+import { mainbgColor } from "@/constants/Colors";
+import { router } from "expo-router";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { GET_ALL_QUIZZES } from "@/queries/queries";
+import { useDispatch, useSelector } from "react-redux";
+import { incrementScore, otherdata } from "@/redux/quizSlice";
 
 // Define 5 sample questions with correct answers
 // const questions = [
@@ -78,202 +86,319 @@ const validateEmail = (email) => {
 };
 export default function QuizScreen() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState("");
   const [correctCount, setCorrectCount] = useState(0);
   const [wrongCount, setWrongCount] = useState(0);
   const [progress, setProgress] = useState(0);
   const [showsheet, setshowsheet] = useState(false);
   const [questions, setquestions] = useState([]);
-  const alphabets = ['A', 'B', 'C', 'D'];
+  const alphabets = ["A", "B", "C", "D"];
   const [timeUp, settimeUp] = useState(false);
   const [timerunning, settimerunning] = useState(0);
-  const {score,other} = useSelector((state)=>state.quiz)
+  const { score, other } = useSelector((state) => state.quiz);
   const [email, setemail] = useState(null);
   const dispatch = useDispatch();
+  const timeLimit = 15 * 60;
 
-  const quizzes = useQuery(GET_ALL_QUIZZES);
+  function formatSecondsToTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
+      2,
+      "0"
+    )}`;
+  }
+
+  const [getQuizes, { loading, error, data }] = useLazyQuery(GET_ALL_QUIZZES);
+
   useEffect(() => {
-    if(quizzes?.data?.findAllQuestions){
-      setquestions(quizzes?.data?.findAllQuestions);
+    getQuizes(); // Only call once on mount
+  }, []);
+
+  useEffect(() => {
+    if (data?.findAllQuestions) {
+      setquestions(data.findAllQuestions);
     }
-    console.log(quizzes?.data?.findAllQuestions,1);
-    // setquestions(quizzes?.data?.Quizs);
-  }, [quizzes?.data?.findAllQuestions]);
+  }, [data]); // Listen for data updates
 
   const handleNext = () => {
     const currentQuestion = questions[currentQuestionIndex];
-    dispatch(otherdata({totalQuestion:questions.length,answered:currentQuestionIndex+1}));
+    dispatch(
+      otherdata({
+        totalQuestion: questions.length,
+        answered: currentQuestionIndex + 1,
+      })
+    );
 
-    console.log(selectedOption,currentQuestion.correctAnswer,selectedOption.trim()===currentQuestion.correctAnswer.trim(),1===1);
-    
+    console.log(
+      selectedOption,
+      currentQuestion.correctAnswer,
+      selectedOption.trim() === currentQuestion.correctAnswer.trim(),
+      1 === 1
+    );
+
     if (selectedOption.trim() === currentQuestion.correctAnswer.trim()) {
       setCorrectCount(correctCount + 1);
-      dispatch(incrementScore({correct:correctCount+1,wrong:wrongCount}))
+      dispatch(
+        incrementScore({ correct: correctCount + 1, wrong: wrongCount })
+      );
     } else {
       setWrongCount(wrongCount + 1);
-      dispatch(incrementScore({correct:correctCount,wrong:wrongCount+1}))
+      dispatch(
+        incrementScore({ correct: correctCount, wrong: wrongCount + 1 })
+      );
     }
 
-    if (timerunning<121 && currentQuestionIndex < questions.length - 1) {
+    if (timerunning < 121 && currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedOption('');
+      setSelectedOption("");
       setProgress((currentQuestionIndex + 1) / questions.length);
-    }else{
+    } else {
       setProgress((currentQuestionIndex + 1) / questions.length);
-      dispatch(otherdata({totalQuestion:questions.length,answered:correctCount+wrongCount}));
-      setshowsheet(true)
+      dispatch(
+        otherdata({
+          totalQuestion: questions.length,
+          answered: correctCount + wrongCount,
+        })
+      );
+      setshowsheet(true);
     }
   };
 
   useEffect(() => {
-    if (timerunning >= 120) {
+    if (timerunning >= timeLimit) {
       settimeUp(true);
-      return; // ✅ Prevents starting a new interval if already at 120
+      return; // ✅ Prevents starting a new interval if already at timeLimit
     }
     let timeInterval;
-    if(questions[0]){
+    if (questions[0]) {
       timeInterval = setInterval(() => {
         settimerunning((prev) => prev + 1);
-      }, 50);
+      }, 1000);
     }
-    
 
     return () => clearInterval(timeInterval); // ✅ Proper cleanup on unmount
-  }, [timerunning,questions[0]]); // ✅ Depend on timeRunning
-
-  
-
-  if(!questions[0]){
-    return <Text className='text-white text-center mt-20'>Loading...</Text>
-  }
+  }, [timerunning, questions[0]]); // ✅ Depend on timeRunning
 
   const handlOpenSeet = () => {
     setshowsheet(true);
   };
 
   const handleEmil = () => {
-    if(!validateEmail(email)){
+    if (!validateEmail(email)) {
       ToastAndroid.show("Invalid Email", ToastAndroid.SHORT);
       return 0;
     }
-    dispatch(otherdata({...other, email:email}))
+    dispatch(otherdata({ ...other, email: email }));
     setshowsheet(false);
     router.push("/scores");
   };
 
-  
+  const quit = () => {
+    Alert.alert(
+      "Are you sure you want to quit?",
+      "Your progress will not be saved.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Quit",
+          onPress: () => router.push("/home"),
+        },
+      ]
+    )
+    
+  }
 
   const currentQuestion = questions[currentQuestionIndex];
 
-  return (<>
-    <View className="flex-1 pt-6" style={{backgroundColor:mainbgColor}}>
-      <View className="flex-row justify-between items-center py-9 px-4">
-        <TouchableOpacity className='h-10 rounded-full justify-center items-center w-10 bg-pink-500'>
-          <Ionicons name='footsteps-sharp' color={'#fff'} size={23} />
-        </TouchableOpacity>
-        <Text className="text-white text-sm">{currentQuestionIndex + 1}/{questions?.length}</Text>
-        <View className='h-3 bg-gray-500 rounded-full w-[250px]'>
-          <View
-            className="bg-pink-500 h-full rounded-full"
-            style={{ width: `${progress * 100}%` }}
-          ></View>
-        </View>
-        <TouchableOpacity className='h-12 rounded-full justify-center items-center w-12 bg-gray-700 pl-[1px]'>
-          <Ionicons name='close' color={'#fff'} size={23} />
-        </TouchableOpacity>
-      </View>
-     
-      <View className='flex flex-row'>
-        <Text className="text-white text-sm">Correct: {correctCount} {Math.round((timerunning/120)*100)}</Text>
-        <Text className="text-white text-sm">Wrong: {wrongCount}</Text>
-      </View>
+  if (loading)
+    return (
+      <Text className="text-white text-center mt-20">Loading quizzes...</Text>
+    );
+  if (error)
+    return (
+      <Text className="text-white text-center mt-20">
+        Error fetching quizzes: {error.message}
+      </Text>
+    );
 
-      <View className="bg-[#262A2F] flex-1 px-4 rounded-t-3xl mt-7">
-        <View className='flex justify-center items-center'>
-          <View className="flex items-center -mt-7 bg-[#262A2F] rounded-full w-[50px]">
-            <Progress.Circle borderColor={'#262A2F'} unfilledColor={'#262A2F'} color={'#00ce41'} formatText={()=><View className=" bg-gray-800 rounded-full p-1 justify-center items-center">
-              <Ionicons name="timer" size={28} color="white" />
-            </View>} showsText={true} progress={(Math.round((timerunning/120)*100)/100)} size={50} indeterminate={false} />
-            
+  return (
+    <>
+      <View className="flex-1 pt-6" style={{ backgroundColor: mainbgColor }}>
+        <View className="flex-row justify-between items-center py-9 px-4">
+          <TouchableOpacity className="h-10 rounded-full justify-center items-center w-10 bg-pink-500">
+            <Ionicons name="footsteps-sharp" color={"#fff"} size={23} />
+          </TouchableOpacity>
+          <Text className="text-white text-sm">
+            {currentQuestionIndex + 1}/{questions?.length}
+          </Text>
+          <View className="h-3 bg-gray-500 rounded-full w-[250px]">
+            <View
+              className="bg-pink-500 h-full rounded-full"
+              style={{ width: `${progress * 100}%` }}
+            ></View>
           </View>
+          <TouchableOpacity onPress={quit} className="h-12 rounded-full justify-center items-center w-12 bg-gray-700 pl-[1px]">
+            <Ionicons name="close" color={"#fff"} size={23} />
+          </TouchableOpacity>
         </View>
-        {timerunning>=120&&<Text className='text-center text-red-600 text-xl font-bold'>Time Up!</Text>}
-        <Text className="text-white text-2xl text-center mt-6 font-semibold">
-          {currentQuestion?.questionText}
-        </Text>
 
-        <FlatList
-          data={currentQuestion?.answers}
-          keyExtractor={(item) => item}
-          className="mt-6"
-          renderItem={({ item,index }) => (
-            <TouchableOpacity
-              onPress={() => !(timerunning>=120)&&setSelectedOption(item)}
-              className={`flex-row border ${
-                selectedOption === item ? 'border-pink-300' : 'border-gray-700'
-              } items-center justify-between px-4 py-3 bg-gray-90[#101214] rounded-xl mb-3`}
-            >
-              <View className="flex-row items-center">
-                <View className="w-8 h-8 bg-pink-500 rounded-full justify-center items-center">
-                  <Text className="text-white font-bold">{alphabets[index]}</Text>
-                </View>
-                <Text className="text-white ml-4 text-lg">{item}</Text>
-              </View>
-              <View
-                className={`w-6 h-6 border-[3px] ${
-                  selectedOption === item ? 'border-yellow-300' : 'border-gray-700'
-                } rounded-full justify-center items-center`}
+        {/* <View className='flex flex-row'>
+        <Text className="text-white text-sm">Correct: {correctCount} {Math.round((timerunning/timeLimit)*100)}</Text>
+        <Text className="text-white text-sm">Wrong: {wrongCount}</Text>
+      </View> */}
+
+        <View className="bg-[#262A2F] flex-1 px-4 rounded-t-3xl mt-7">
+          <View className="flex justify-center items-center">
+            <View className="flex items-center -mt-7 bg-[#262A2F] rounded-full w-[50px]">
+              <Progress.Circle
+                borderColor={"#262A2F"}
+                unfilledColor={"#262A2F"}
+                color={"#00ce41"}
+                formatText={() => (
+                  <View className=" bg-gray-800 rounded-full p-1 justify-center items-center">
+                    <Ionicons name="timer" size={28} color="white" />
+                  </View>
+                )}
+                showsText={true}
+                progress={Math.round((timerunning / timeLimit) * 100) / 100}
+                size={50}
+                indeterminate={false}
+              />
+            </View>
+          </View>
+          {timerunning >= timeLimit && (
+            <Text className="text-center text-red-600 text-xl font-bold">
+              Time Up!
+            </Text>
+          )}
+          {!(timerunning >= timeLimit) && (
+            <Text className="text-center text-green-600 text-xl font-bold">
+              {formatSecondsToTime(timerunning)}
+            </Text>
+          )}
+          <Text className="text-white text-2xl text-center mt-6 font-semibold">
+            {currentQuestion?.questionText}
+          </Text>
+
+          <FlatList
+            data={currentQuestion?.answers}
+            keyExtractor={(item) => item}
+            className="mt-6"
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  !(timerunning >= timeLimit) && setSelectedOption(item)
+                }
+                className={`flex-row border ${
+                  selectedOption === item
+                    ? "border-pink-300"
+                    : "border-gray-700"
+                } items-center justify-between px-4 py-3 bg-gray-90[#101214] rounded-xl mb-3`}
               >
-                {selectedOption === item && <View className="bg-yellow-400 h-2 rounded-full w-2"></View>}
-              </View>
+                <View className="flex-row items-center">
+                  <View className="w-8 h-8 bg-pink-500 rounded-full justify-center items-center">
+                    <Text className="text-white font-bold">
+                      {alphabets[index]}
+                    </Text>
+                  </View>
+                  <Text className="text-white ml-4 text-lg">{item}</Text>
+                </View>
+                <View
+                  className={`w-6 h-6 border-[3px] ${
+                    selectedOption === item
+                      ? "border-yellow-300"
+                      : "border-gray-700"
+                  } rounded-full justify-center items-center`}
+                >
+                  {selectedOption === item && (
+                    <View className="bg-yellow-400 h-2 rounded-full w-2"></View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+
+          {!(timerunning >= timeLimit) && (
+            <TouchableOpacity
+              onPress={handleNext}
+              disabled={selectedOption === ""}
+              className={` ${
+                selectedOption === ""
+                  ? "bg-gray-700 opacity-50"
+                  : "bg-yellow-500"
+              } py-4 rounded-full mb-5`}
+            >
+              <Text className="text-gray-900 text-center font-bold text-lg">
+                {currentQuestionIndex === questions.length - 1
+                  ? "Finish"
+                  : "Next"}
+              </Text>
             </TouchableOpacity>
           )}
-        />
-
-      {!(timerunning>=120)&&<TouchableOpacity
-        onPress={handleNext}
-        disabled={selectedOption === ''}
-        className={` ${
-          selectedOption === '' ? 'bg-gray-700 opacity-50' : 'bg-yellow-500'
-        } py-4 rounded-full mb-5`}
-      >
-        <Text className="text-gray-900 text-center font-bold text-lg">
-          {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
-        </Text>
-      </TouchableOpacity>}
-      {timerunning>=120&&<TouchableOpacity
-        onPress={handlOpenSeet}
-        className={` bg-yellow-500 py-4 rounded-full mb-5`}
-      >
-        <Text className="text-gray-900 text-center font-bold text-lg">
-          {'Finish' }
-        </Text>
-      </TouchableOpacity>}
-      
+          {timerunning >= timeLimit && (
+            <TouchableOpacity
+              onPress={handlOpenSeet}
+              className={` bg-yellow-500 py-4 rounded-full mb-5`}
+            >
+              <Text className="text-gray-900 text-center font-bold text-lg">
+                {"Finish"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
-      
-    </View>
-    
-    {showsheet&&<View className='absolute top-0 h-full w-full left-0 flex-1 bg-[#00000093] z-50'>
-          <TouchableOpacity onPress={()=>setshowsheet(false)}  className='h-10 absolute bottom-[270px] right-4 rounded-full justify-center items-center w-10 bg-[#353434]'>
-            <Ionicons name='close' color={'#fff'} size={23} />
+      {showsheet && (
+        <View className="absolute top-0 h-full w-full left-0 flex-1 bg-[#00000093] z-50">
+          <TouchableOpacity
+            onPress={() => setshowsheet(false)}
+            className="h-10 absolute bottom-[300px] right-4 rounded-full justify-center items-center w-10 bg-[#353434]"
+          >
+            <Ionicons name="close" color={"#fff"} size={23} />
           </TouchableOpacity>
-          <View className='bg-[#1c1c1c] rounded-t-3xl p-4 w-full absolute bottom-0 py-7'>
-            <Text className='text-center text-3xl text-gray-50 font-bold '>Email Address</Text>
-            <Text className='text-center text-sm text-gray-400 '>Quam, voluptates. Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi, atque.</Text>
+          <View className="bg-[#1c1c1c] rounded-t-3xl p-4 w-full absolute bottom-0 py-7">
+            <Text className="text-center text-3xl text-gray-50 font-bold ">
+              Email Address
+            </Text>
+            <Text className="text-center text-sm text-gray-400 ">
+              Quam, voluptates. Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Commodi, atque.
+            </Text>
 
-            <TextInput onChangeText={setemail} className='bg-[#373737] text-white rounded-xl p-4 py-4 my-5' placeholder='Enter your email to get result' placeholderTextColor={'#a3a3a3'} />
+            <TextInput
+              onChangeText={setemail}
+              className="bg-[#373737] text-white rounded-xl p-4 py-4 my-5"
+              placeholder="Enter your email to get result"
+              placeholderTextColor={"#a3a3a3"}
+            />
 
-            {email&&<TouchableOpacity onPress={handleEmil} className={` bg-yellow-500 py-3 rounded-full mb-3`}>
-              <Text className="text-gray-900 text-center font-bold text-lg">Continue</Text>
-            </TouchableOpacity>}
+            {email && (
+              <TouchableOpacity
+                onPress={handleEmil}
+                className={` bg-yellow-500 py-3 rounded-full mb-3`}
+              >
+                <Text className="text-gray-900 text-center font-bold text-lg">
+                  Continue
+                </Text>
+              </TouchableOpacity>
+            )}
 
-            {!email&&<TouchableOpacity className={` bg-[#3B4046] py-3 rounded-full mb-3`}>
-              <Text className="text-gray-900 text-center font-bold text-lg">Continue</Text>
-            </TouchableOpacity>}
+            {!email && (
+              <TouchableOpacity
+                className={` bg-[#3B4046] py-3 rounded-full mb-3`}
+              >
+                <Text className="text-gray-900 text-center font-bold text-lg">
+                  Continue
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-    </View>}
+        </View>
+      )}
     </>
   );
 }
